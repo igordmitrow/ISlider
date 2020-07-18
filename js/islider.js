@@ -29,7 +29,6 @@ class iSlider {
         });
       }
   	}
-
   	async setCurrent(dir=0) {
   		this.slides[this.current].classList.add('active-slide');
   		this.indicators[this.current].classList.add('active-indicator');
@@ -37,9 +36,7 @@ class iSlider {
   			this.slides[this.current].classList.add('Slider__Animation');
   		}
   		this.next = (this.current + 1 < this.slides.length) ? this.current + 1 : 0;
-  		// this.prev = (this.current - 1 >= 0) ? this.current - 1 : this.slides.length - 1;
   		this.slides[this.next].classList.add('next-slide');
-  		// this.slides[this.prev].classList.add('prev-slide');
 
   	}
 
@@ -156,6 +153,4 @@ class iSlider {
 			this.callChgSlide();			
 		}.bind(this));
   	}
-
-
 } 
