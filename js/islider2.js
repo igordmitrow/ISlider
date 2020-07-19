@@ -1,11 +1,11 @@
 class iSlider {
 	constructor(wrapper='IWrapper',initialSlide=0, direction=0, changeMode=0, arrowLocation=0) {
 		this.arrowLocation = arrowLocation; // Arrow Location (inside Wrapper or outside)
+		this.unlockWheel = true; // Disallow change slide on wheel event, when false
 		this.domWrapper = document.querySelector(`.${wrapper}`); // Get Wrapper
 		this.current = initialSlide; // Slide that will be at the beginning
 		this.isMouseDown = false; // Is user press left button on mouse 
     	this.direction = direction; // Horizontal or Vertical Slider
-		this.unlockChg = true; // Disallow change slide, when false
     	this.changeMode = 0; // Different mode of slide change
 		this.arrows = []; // Array with all navigation arrow
 		this.indicators = []; // Slider indicators
@@ -55,6 +55,16 @@ class iSlider {
 		this.domWrapper.addEventListener('touchend', function(e) {
   			this.dx -= this.direction == 1 ? e.changedTouches[0].clientY : e.changedTouches[0].clientX;
 			if(Math.abs(this.dx) > 100) this.chgSlide(this.dx > 0 ? -1 : 1);			
+		}.bind(this));
+
+		this.domWrapper.addEventListener('wheel', function (e) {
+			if(this.unlockWheel){
+				this.chgSlide(e.deltaY > 0 ? 1 : -1);
+				this.unlockWheel = false;
+				setTimeout(function () {
+					this.unlockWheel = true;
+				}.bind(this), 600);
+			}
 		}.bind(this));
   	}
 
