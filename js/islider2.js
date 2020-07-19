@@ -54,7 +54,7 @@ class iSlider {
 
 		this.domWrapper.addEventListener('touchend', function(e) {
   			this.dx -= this.direction == 1 ? e.changedTouches[0].clientY : e.changedTouches[0].clientX;
-			if(Math.abs(this.dx) > 100) this.chgSlide(this.dx > 0 ? -1 : 1);			
+			if(Math.abs(this.dx) > 100) this.chgSlide(this.dx > 0 ? 1 : -1);			
 		}.bind(this));
 
 		this.domWrapper.addEventListener('wheel', function (e) {
