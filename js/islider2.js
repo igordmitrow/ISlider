@@ -116,7 +116,7 @@ class iSlider {
 				setTimeout(function (slide) {
 					slide.classList.remove('right-slide');
 					slide.classList.remove('no-animation-slide');
-				}, 1, this.getNextSlide());
+				}, 15, this.getNextSlide());
 			}
 			this.getPrevSlide().classList.add('prev-slide');
 			this.slides[this.current].classList.add('active-slide');
@@ -140,7 +140,7 @@ class iSlider {
   		setTimeout(function () {
   			this.slides[this.current].classList.add('active-slide');
 			if(this.slides[this.current].classList.contains('next-quick-slide')) 										this.slides[this.current].classList.remove('next-quick-slide');
-  		}.bind(this), 10);
+  		}.bind(this), 15);
   		this.indicators[this.current].classList.add('active-indicator');
   	}
 } 
