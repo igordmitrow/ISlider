@@ -63,7 +63,7 @@ class iSlider {
 				this.unlockWheel = false;
 				setTimeout(function () {
 					this.unlockWheel = true;
-				}.bind(this), this.mode == 1 ? 1100 : 550);
+				}.bind(this), 550);
 			}
 		}.bind(this));
   	}
@@ -91,8 +91,7 @@ class iSlider {
 	  		if(dir > 0) this.slides[this.next].classList.add('next-quick-slide');
 	  		this.buildDomTree();
 			this.setCurrent();
-		}else if (this.mode == 1 && this.unlockWheel == true) {
-			this.unlockWheel = false;
+		}else if (this.mode == 1) {
 			this.getPrevSlide().classList.remove('prev-slide');
 			this.slides[this.current].classList.remove('active-slide');
 			this.indicators[this.current].classList.remove('active-indicator');
@@ -122,10 +121,6 @@ class iSlider {
 			this.slides[this.current].classList.add('active-slide');
 			this.indicators[this.current].classList.add('active-indicator');
 			this.getNextSlide().classList.add('next-slide');
-
-			setTimeout(function () {
-				this.unlockWheel = true
-			}.bind(this), 1100);
 		}
   	}
   	async setCurrent(){
