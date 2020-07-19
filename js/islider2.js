@@ -5,19 +5,22 @@ class iSlider {
 		this.current = initialSlide; // Slide that will be at the beginning
 		this.isMouseDown = false; // Is user press left button on mouse 
     	this.direction = direction; // Horizontal or Vertical Slider
+		this.unlockChg = true; // Disallow change slide, when false
     	this.changeMode = 0; // Different mode of slide change
 		this.arrows = []; // Array with all navigation arrow
 		this.indicators = []; // Slider indicators
 		this.slides = []; // Array with all slide
 		this.wrapper = wrapper; // Slide Wrapper
 		this.dx = 0; // Delta x of swipe
+		this.next = 0; // Next Slide
 		this.initSlider().then(this.initWrapperEvent()).then(this.setCurrent());
   	}
   	//Initialize slider
   	async initSlider() {
   		document.querySelectorAll(`.${this.wrapper} *`).forEach( function (e){
-  			if(e.classList.contains('slide')) this.slides.push(e);
-  			else if (e.classList.contains('arrow')){
+  			if(e.classList.contains('slide')){ 
+  				this.slides.push(e);
+  			}else if (e.classList.contains('arrow')){
   				this.arrows.push(e);
   				e.addEventListener('click',function (event) {
   					this.chgSlide(event.target == this.arrows[0] ? -1 : 1);
@@ -25,9 +28,6 @@ class iSlider {
   			else if (e.classList.contains('indicator')) {
   				this.indicators.push(e);
   				e.addEventListener('click', function (event) {
-  					this.slides.forEach(function (e) {
-  						if(e.classList.contains('Slider__Animation')) e.classList.remove('Slider__Animation');
-  					});
   					this.chgSlide(this.indicators.indexOf(event.target)-this.current);
   				}.bind(this));}
   		}.bind(this));
@@ -57,21 +57,44 @@ class iSlider {
 			if(Math.abs(this.dx) > 100) this.chgSlide(this.dx > 0 ? -1 : 1);			
 		}.bind(this));
   	}
-  	async chgSlide(dir) {
-  		this.slides[this.current].classList.remove('active-slide');
-  		this.slides[this.next].classList.remove('next-slide');
-  		this.indicators[this.current].classList.remove('active-indicator');
-  		setTimeout(function () {
-  			this.classList.remove('Slider__Animation');
-  		}.bind(this.slides[this.current]), 500);
-  		this.current = this.current + dir >= 0 ? this.current + dir < this.slides.length ? this.current + dir : 0 : this.slides.length - 1;
-  		this.setCurrent(dir);
+
+  	buildDomTree() {
+  		this.domWrapper.querySelectorAll('.slide').forEach(function (e) {
+  			if(this.slides[this.current] != e) {
+	  			this.domWrapper.removeChild(e);
+  			}
+  		}.bind(this));
+  		this.domWrapper.prepend(this.slides[this.next]);
   	}
-  	async setCurrent(dir){
-  		this.slides[this.current].classList.add('active-slide');
+  	async chgSlide(dir) {
+  		if(this.unlockChg){
+			// this.unlockChg = false;
+			this.slides[this.current].classList.remove('active-slide');
+			this.indicators[this.current].classList.remove('active-indicator');
+	  		this.next = this.current + dir >= 0 ? this.current + dir < this.slides.length ? this.current + dir : 0 : this.slides.length - 1;
+	  		this.slides[this.current].classList.add(dir < 0 ? 'next-slide' : 'prev-slide');
+	  		if(dir > 0) this.slides[this.next].classList.add('next-quick-slide');
+	  		this.buildDomTree();
+  			this.setCurrent();
+	  		
+  		}
+  	}
+  	async setCurrent(){
+  		// this.buildDomTree();
+  		// this.slides[this.current].classList.remove(dir > 0 ? 'next-slide' : 'prev-slide');
+  		setTimeout(function (domWrapper) {
+  			if(this.classList.contains('next-slide')){
+	  			this.classList.remove('next-slide');
+	  			domWrapper.removeChild(this);
+  			} 
+  			else this.classList.remove('prev-slide');
+  		}.bind(this.slides[this.current]), 500, this.domWrapper);
+  		this.current = this.next ?? this.current;
+  		setTimeout(function () {
+  			this.slides[this.current].classList.add('active-slide');
+			if(this.slides[this.current].classList.contains('next-quick-slide')) this.slides[this.current].classList.remove('next-quick-slide');
+  		}.bind(this), 10);
   		this.indicators[this.current].classList.add('active-indicator');
-  		this.next = (this.current + 1 < this.slides.length) ? this.current + 1 : 0;
-  		this.slides[this.next].classList.add('next-slide');
-  		if(Math.abs(dir) == 1) this.slides[this.current].classList.add('Slider__Animation');
+  		// if(Math.abs(dir) == 1) this.slides[this.current].classList.add('Slider__Animation');
   	}
 } 

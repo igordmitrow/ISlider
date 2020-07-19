@@ -54,10 +54,11 @@ body {
 		width: 100%;
 		position: absolute;
 		text-align: center;
+		transition: transform .5s;
 	}
 
-	.Slider__Animation {
-		transition: transform .5s;
+	.no-animation-slide {
+		transition: none;
 	}
 
 	.indicator {
@@ -84,6 +85,11 @@ body {
 
 	.next-slide {
 		transform: translate(100%,0);
+	}
+
+	.next-quick-slide {
+		transform: translate(100%,0);
+		transition: none;
 	}
 
 	.active-slide {
