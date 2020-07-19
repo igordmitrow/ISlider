@@ -165,3 +165,21 @@ body {
 		transform: translate(300%,-50%);
 	}
 }
+
+
+.wrappe {
+	margin-top: 100px;
+}
+.Slider__Container {
+	display: flex;
+	flex-wrap: nowrap;
+	transition: transform .5s;
+	will-change: transform;
+
+	.slide {
+		position: static;
+		height: 100%;
+		width: 100vw;
+		transform: translate(0);
+	}
+}

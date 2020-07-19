@@ -121,6 +121,13 @@ class iSlider {
 			this.slides[this.current].classList.add('active-slide');
 			this.indicators[this.current].classList.add('active-indicator');
 			this.getNextSlide().classList.add('next-slide');
+		}else if (this.mode == 2){
+			this.indicators[this.current].classList.remove('active-indicator');
+			this.current = this.current + dir >= 0 ? this.current + dir < this.slides.length ? 										this.current + dir : 0 : this.slides.length - 1;
+			var container = this.domWrapper.querySelector('.Slider__Container');
+			var delta = (this.current * -100);
+			container.style.transform = `translateX(${delta}vw)`;
+			this.indicators[this.current].classList.add('active-indicator');
 		}
   	}
   	async setCurrent(){
