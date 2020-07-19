@@ -6,14 +6,14 @@ class iSlider {
 		this.current = initialSlide; // Slide that will be at the beginning
 		this.isMouseDown = false; // Is user press left button on mouse 
     	this.direction = direction; // Horizontal or Vertical Slider
-    	this.changeMode = 0; // Different mode of slide change
 		this.arrows = []; // Array with all navigation arrow
+    	this.mode = changeMode; // Different mode of slide change
 		this.indicators = []; // Slider indicators
 		this.slides = []; // Array with all slide
 		this.wrapper = wrapper; // Slide Wrapper
 		this.dx = 0; // Delta x of swipe
 		this.next = 0; // Next Slide
-		this.initSlider().then(this.initWrapperEvent()).then(this.setCurrent());
+		this.initSlider().then(this.initWrapperEvent()).then(this.chgSlide(0));
   	}
   	//Initialize slider
   	async initSlider() {
@@ -63,9 +63,17 @@ class iSlider {
 				this.unlockWheel = false;
 				setTimeout(function () {
 					this.unlockWheel = true;
-				}.bind(this), 600);
+				}.bind(this), this.mode == 1 ? 1100 : 550);
 			}
 		}.bind(this));
+  	}
+
+  	getPrevSlide() {
+  		return this.slides[this.current == 0 ? this.slides.length - 1 : this.current - 1];
+  	}
+
+  	getNextSlide() {
+  		return this.slides[this.current == this.slides.length - 1 ? 0 : this.current + 1];
   	}
 
   	buildDomTree() {
@@ -75,13 +83,50 @@ class iSlider {
   		this.domWrapper.prepend(this.slides[this.next]);
   	}
   	async chgSlide(dir) {
-		this.slides[this.current].classList.remove('active-slide');
-		this.indicators[this.current].classList.remove('active-indicator');
-  		this.next = this.current + dir >= 0 ? this.current + dir < this.slides.length ? 										this.current + dir : 0 : this.slides.length - 1;
-  		this.slides[this.current].classList.add(dir < 0 ? 'next-slide' : 'prev-slide');
-  		if(dir > 0) this.slides[this.next].classList.add('next-quick-slide');
-  		this.buildDomTree();
-		this.setCurrent();
+		if(this.mode == 0) {
+			this.slides[this.current].classList.remove('active-slide');
+			this.indicators[this.current].classList.remove('active-indicator');
+	  		this.next = this.current + dir >= 0 ? this.current + dir < this.slides.length ? 										this.current + dir : 0 : this.slides.length - 1;
+	  		this.slides[this.current].classList.add(dir < 0 ? 'next-slide' : 'prev-slide');
+	  		if(dir > 0) this.slides[this.next].classList.add('next-quick-slide');
+	  		this.buildDomTree();
+			this.setCurrent();
+		}else if (this.mode == 1 && this.unlockWheel == true) {
+			this.unlockWheel = false;
+			this.getPrevSlide().classList.remove('prev-slide');
+			this.slides[this.current].classList.remove('active-slide');
+			this.indicators[this.current].classList.remove('active-indicator');
+			this.getNextSlide().classList.remove('next-slide');
+
+			if(dir < 0){
+				this.getNextSlide().classList.add('right-slide');
+				setTimeout(function (slide) {
+					slide.classList.remove('right-slide');
+					slide.classList.add('no-animation-slide');
+				}, 500, this.getNextSlide());
+				setTimeout(function (slide) {
+					slide.classList.remove('no-animation-slide');
+				}, 1000, this.getNextSlide());
+			}
+
+			this.current = this.current + dir >= 0 ? this.current + dir < this.slides.length ? 										this.current + dir : 0 : this.slides.length - 1;
+			if(dir > 0){
+				this.getNextSlide().classList.add('right-slide');
+				this.getNextSlide().classList.add('no-animation-slide');
+				setTimeout(function (slide) {
+					slide.classList.remove('right-slide');
+					slide.classList.remove('no-animation-slide');
+				}, 1, this.getNextSlide());
+			}
+			this.getPrevSlide().classList.add('prev-slide');
+			this.slides[this.current].classList.add('active-slide');
+			this.indicators[this.current].classList.add('active-indicator');
+			this.getNextSlide().classList.add('next-slide');
+
+			setTimeout(function () {
+				this.unlockWheel = true
+			}.bind(this), 1100);
+		}
   	}
   	async setCurrent(){
   		setTimeout(function (domWrapper) {
