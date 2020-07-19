@@ -60,41 +60,32 @@ class iSlider {
 
   	buildDomTree() {
   		this.domWrapper.querySelectorAll('.slide').forEach(function (e) {
-  			if(this.slides[this.current] != e) {
-	  			this.domWrapper.removeChild(e);
-  			}
+  			if(this.slides[this.current] != e) this.domWrapper.removeChild(e);
   		}.bind(this));
   		this.domWrapper.prepend(this.slides[this.next]);
   	}
   	async chgSlide(dir) {
-  		if(this.unlockChg){
-			// this.unlockChg = false;
-			this.slides[this.current].classList.remove('active-slide');
-			this.indicators[this.current].classList.remove('active-indicator');
-	  		this.next = this.current + dir >= 0 ? this.current + dir < this.slides.length ? this.current + dir : 0 : this.slides.length - 1;
-	  		this.slides[this.current].classList.add(dir < 0 ? 'next-slide' : 'prev-slide');
-	  		if(dir > 0) this.slides[this.next].classList.add('next-quick-slide');
-	  		this.buildDomTree();
-  			this.setCurrent();
-	  		
-  		}
+		this.slides[this.current].classList.remove('active-slide');
+		this.indicators[this.current].classList.remove('active-indicator');
+  		this.next = this.current + dir >= 0 ? this.current + dir < this.slides.length ? 										this.current + dir : 0 : this.slides.length - 1;
+  		this.slides[this.current].classList.add(dir < 0 ? 'next-slide' : 'prev-slide');
+  		if(dir > 0) this.slides[this.next].classList.add('next-quick-slide');
+  		this.buildDomTree();
+		this.setCurrent();
   	}
   	async setCurrent(){
-  		// this.buildDomTree();
-  		// this.slides[this.current].classList.remove(dir > 0 ? 'next-slide' : 'prev-slide');
   		setTimeout(function (domWrapper) {
   			if(this.classList.contains('next-slide')){
 	  			this.classList.remove('next-slide');
-	  			domWrapper.removeChild(this);
+	  			if(domWrapper.contains(this)) domWrapper.removeChild(this);
   			} 
   			else this.classList.remove('prev-slide');
   		}.bind(this.slides[this.current]), 500, this.domWrapper);
   		this.current = this.next ?? this.current;
   		setTimeout(function () {
   			this.slides[this.current].classList.add('active-slide');
-			if(this.slides[this.current].classList.contains('next-quick-slide')) this.slides[this.current].classList.remove('next-quick-slide');
+			if(this.slides[this.current].classList.contains('next-quick-slide')) 										this.slides[this.current].classList.remove('next-quick-slide');
   		}.bind(this), 10);
   		this.indicators[this.current].classList.add('active-indicator');
-  		// if(Math.abs(dir) == 1) this.slides[this.current].classList.add('Slider__Animation');
   	}
 } 
